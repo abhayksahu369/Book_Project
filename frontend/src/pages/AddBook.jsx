@@ -14,6 +14,7 @@ const AddBook = () => {
   });
 
   const user = useSelector((state) => state.auth.user); // Get user from Redux state
+  const token = useSelector((state) => state.auth.token);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,11 +22,13 @@ const AddBook = () => {
   };
 
   const handleSubmit = async (e) => {
+    console.log(token);
+    console.log(user);
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/books', formData, {
+      const response = await axios.post('http://localhost:5000/books/addbook', formData, {
         headers: {
-          Authorization: `Bearer ${user.token}`, // Include the token for authentication
+          Authorization: `Bearer ${token}`, // Include the token for authentication
         },
       });
       toast.success('Book added successfully!'); // Show success toast

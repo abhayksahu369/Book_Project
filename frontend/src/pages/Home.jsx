@@ -6,7 +6,7 @@ const Home = () => {
   const navigate = useNavigate();
 
   const handleGetStarted = () => {
-    navigate('/register'); // Redirect to the signup page
+    navigate('/books'); // Redirect to the signup page
   };
 
   return (
