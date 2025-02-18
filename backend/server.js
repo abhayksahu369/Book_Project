@@ -4,7 +4,7 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 const User = require("./routes/authRoutes")
 const Books = require("./routes/bookRoutes")
-// const Review = require("./routes/reviewRoutes")
+const reviewRoutes = require('./routes/reviewRoutes'); // Import review routes
 
 dotenv.config();
 connectDB();
@@ -19,6 +19,6 @@ app.get("/",(req,res) => {
 
 app.use("/users", User);
 app.use("/books", Books);
-// app.use("/reviews", Review);
+app.use('/reviews', reviewRoutes);
 
 app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`));
