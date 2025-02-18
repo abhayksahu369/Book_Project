@@ -28,15 +28,10 @@ router.post("/", authMiddleware, async (req, res) => {
 // Get reviews (filtered by userId, bookId, comment, or rating)
 router.get("/:id", async (req, res) => {
   try {
-    const { userId, bookId, comment, rating } = req.query;
-    let filter = {};
+    const { id } = req.params;
+    console.log(id);
 
-    if (userId) filter.user = userId;
-    if (bookId) filter.book = bookId;
-    if (comment) filter.comment = new RegExp(comment, "i"); // Case-insensitive search
-    if (rating) filter.rating = rating;
-
-    const reviews = await Review.find(filter).populate("user", "name").populate("book", "title");
+    const reviews = await Review.find({ book: id });
 
     res.json(reviews);
   } catch (error) {

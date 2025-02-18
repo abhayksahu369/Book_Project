@@ -3,14 +3,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify'; // Import toast for notifications
 import PropTypes from 'prop-types'; // Import PropTypes
 import './ReviewForm.css'; // Import CSS for styling
+import axios from 'axios';
 
 const ReviewForm = ({ bookId }) => {
-//   const dispatch = useDispatch();
-//   const user = useSelector((state) => state.auth.user); // Get user from Redux state
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user); // Get user from Redux state
+  const token = useSelector((state) => state.auth.token);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
 
     // if (!user) {
@@ -22,12 +24,30 @@ const ReviewForm = ({ bookId }) => {
     // For example: dispatch(postReview({ bookId, rating, comment }));
 
     // Simulate posting the review
+    try {
+      const response = await axios.post(
+        'http://localhost:5000/reviews/', 
+        { book: bookId, rating, comment }, 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, 
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    console.log(response);
+  
     console.log('Review submitted:', { bookId, rating, comment });
     toast.success('Review submitted successfully!');
 
     // Reset the form
     setRating(0);
     setComment('');
+    }
+    catch (error) {
+      console.error("Error submitting review:", error.response?.data || error);
+      toast.error(error.response?.data?.message || "Failed to submit review");
+    }
   };
 
   return (
