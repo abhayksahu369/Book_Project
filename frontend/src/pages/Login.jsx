@@ -21,7 +21,9 @@ const Login = () => {
         try {
             const response = await axios.post('http://localhost:5000/users/login', { email, password });
             // Store user ID in session storage
+            console.log(response);
             sessionStorage.setItem('userId', response.data.user.id);
+            sessionStorage.setItem('token', response.data.token);
             
             // Dispatch loginSuccess action to update Redux store
             dispatch(loginSuccess({ user: response.data.user, token: response.data.token }));
