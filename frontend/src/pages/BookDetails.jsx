@@ -3,13 +3,16 @@ import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types'; // Import PropTypes
 import ReviewForm from '../components/ReviewForm'; // Import the ReviewForm component
 import './BookDetails.css'; // Import CSS for styling
+
 import axios from 'axios';
+
 
 // import './BookCard.css'; // Optional: for styling
 
 const BookDetails = ({ book }) => {
   const user = useSelector((state) => state.auth.user); // Get user from Redux state
   const [showReviewForm, setShowReviewForm] = useState(false); // State to toggle review form
+
   const [reviews,setReview]=useState([]);
   useEffect(() => {
     const fetchReviews = async () => {
@@ -28,6 +31,20 @@ const BookDetails = ({ book }) => {
     setShowReviewForm(!showReviewForm); // Toggle the review form visibility
   };
 
+  // Function to fetch reviews by book ID
+  const fetchReviews = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/reviews/${book._id}`); // Fetch reviews from backend
+      setReviews(response.data); // Set the fetched reviews in state
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchReviews(); // Fetch reviews when the component mounts
+  }, [book._id]); // Dependency array includes book ID
+
   return (
     <div className="book-details-container">
       <div className="book-card">
@@ -35,7 +52,9 @@ const BookDetails = ({ book }) => {
         <p><strong>Author:</strong> {book.author}</p>
         <p>{book.description}</p>
         <h4>Reviews:</h4>
+
         {reviews && reviews.length > 0 ? (
+
           reviews.map((review) => (
             <div key={review._id} className="review">
               <p><strong>Rating:</strong> {review.rating}</p>
@@ -72,6 +91,8 @@ BookDetails.propTypes = {
         comment: PropTypes.string,
       })
     ),
+    createdAt: PropTypes.string.isRequired,
+    updatedAt: PropTypes.string.isRequired,
   }).isRequired,
 };
 
