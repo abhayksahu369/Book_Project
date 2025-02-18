@@ -33,13 +33,13 @@ const UserProfile = () => {
   };
 
   if (!userDetails) {
-    return <div>Loading...</div>; // Show loading state while fetching
+    return <div className="loading">Loading...</div>; // Show loading state while fetching
   }
 
   return (
     <div className="user-profile">
       <div className="profile-card">
-        <h2>User Profile</h2>
+        <h2>Hey, {userDetails.name}</h2>
         <div className="profile-info">
           <p><strong>Name:</strong> {userDetails.name}</p>
           <p><strong>Email:</strong> {userDetails.email}</p>
