@@ -11,7 +11,7 @@ router.get("/book", async (req, res) => {
 });
 
 // Add new book (Admin Only)
-router.post("/book", authMiddleware, async (req, res) => {
+router.post("/addbook", authMiddleware, async (req, res) => {
   try {
     // Check if user is admin
     if (req.user.role !== "admin") {

@@ -1,39 +1,47 @@
-// const express = require('express');
-// const { checkAuth } = require('../middleware/authMiddleware'); // Import the new auth middleware// Import the controller functions
-// const router = express.Router();
+const express = require("express");
+const Review = require("../models/Review");
+const authMiddleware = require("../middleware/authMiddleware");
 
-// // POST route to submit a review
-// router.post('/reviews', checkAuth, async (req, res) => {
-//     const { bookId, rating, comment } = req.body;
-  
-//     try {
-//       const newReview = new Review({
-//         book: bookId,
-//         user: req.user.id, // Assuming user ID is available from the auth middleware
-//         rating,
-//         comment,
-//       });
-  
-//       await newReview.save();
-//       res.status(201).json(newReview);
-//     } catch (err) {
-//       console.error(err);
-//       res.status(500).json({ message: 'Server error' });
-//     }
-//  }); // Only logged-in users can post reviews
+const router = express.Router();
 
-// // GET route to retrieve reviews for a specific book
-// router.get('/reviews/:bookId', async (req, res) => {
-//     const { bookId } = req.params;
-  
-//     try {
-//       const reviews = await Review.find({ book: bookId }).populate('user', 'username'); // Populate user info
-//       res.status(200).json(reviews);
-//     } catch (err) {
-//       console.error(err);
-//       res.status(500).json({ message: 'Server error' });
-//     }
-// }); // Get reviews for a specific book
+// Create a review (only logged-in users)
+router.post("/", authMiddleware, async (req, res) => {
+  try {
+    const { book, rating, comment } = req.body;
+    const user = req.user.id; // Get user ID from authMiddleware
 
+    // Check if required fields are provided
+    if (!book || !rating || !comment) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
-// module.exports = router;
+    // Create new review
+    const review = new Review({ book, user, rating, comment });
+    await review.save();
+
+    res.status(201).json({ message: "Review added successfully", review });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+});
+
+// Get reviews (filtered by userId, bookId, comment, or rating)
+router.get("/:id", async (req, res) => {
+  try {
+    const { userId, bookId, comment, rating } = req.query;
+    let filter = {};
+
+    if (userId) filter.user = userId;
+    if (bookId) filter.book = bookId;
+    if (comment) filter.comment = new RegExp(comment, "i"); // Case-insensitive search
+    if (rating) filter.rating = rating;
+
+    const reviews = await Review.find(filter).populate("user", "name").populate("book", "title");
+
+    res.json(reviews);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+});
+
+module.exports = router;
