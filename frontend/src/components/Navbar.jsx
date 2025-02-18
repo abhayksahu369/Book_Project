@@ -11,7 +11,6 @@ const Navbar = () => {
   // const isLogedIn = useSelector((state)=> state.isLogedIn);
   const dispatch = useDispatch(); //useDispatch is use to call the function of redux file
   const user = useSelector((state) => state.auth.user); // Get user from Redux state
-  // console.log("checlkin"+user)
   // console.log(isLogedIn);
   const [isOpen, setIsOpen] = React.useState(false);
 
